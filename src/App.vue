@@ -1,17 +1,29 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <SearchBox @on-changed-search="searchChanged" />
+    <ResultBox :search-text="searchText" />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ResultBox from './components/ResultBox.vue'
+import SearchBox from './components/SearchBox.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    ResultBox, SearchBox
+  },
+  data () {
+    return {
+      searchText: null
+    }
+  },
+  methods: {
+    searchChanged: function (searchText) {
+      this.searchText = searchText
+    }
   }
 }
 </script>
