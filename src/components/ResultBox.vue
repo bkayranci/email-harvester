@@ -4,31 +4,14 @@
             <thead>
                 <tr>
                     <th>Email</th>
-                    <!-- <th>Designation</th> -->
-                    <th>Ministry/Designation</th>
-                    <th>Day</th>
-                    <th class="fixed-width">Date</th>
-                    <th class="fixed-width">Time </th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(email, index) in emails" :key="index">{{ email }}>
+                <tr v-for="(email, index) in emails" :key="index">
                     <td data-label="Name">
                         {{ email }}
                     </td>
-                    <td data-label="Ministry/Designation">
-                        Ministry of Agriculture and Farmers Welfare/
-                        National General Secretary
-                    </td>
-                    <td data-label="Day">
-                        Monday </td>
-                    <td data-label="Date">
-                        10-12-2018</td>
-                    <td data-label="Time">
-                        3:00 pm to 5:00 pm</td>
                 </tr>
-
-
             </tbody>
         </table>
     </div>
