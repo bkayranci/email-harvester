@@ -3,7 +3,7 @@
       <div class="row">
         <div class="col-sm-12 mb-3">
           <b-input-group class="mt-3">
-            <b-form-input placeholder="bkayranci" v-model="username" v-on:keyup.enter="searchUser"></b-form-input>
+            <b-form-input v-model="username" v-on:keyup.enter="searchUser"></b-form-input>
             <b-input-group-append>
               <b-button variant="success" @click="searchUser">&#10170;</b-button>
             </b-input-group-append>
