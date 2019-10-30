@@ -1,67 +1,129 @@
 <template>
-    <div>
-        <form action="#" class="Search">
-            <label for="search">
-                Search
-            </label>
-            <input v-on:blur="emitOnChange" type="search" id="search" />
-        </form>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 mb-3">
+          <b-input-group class="mt-3">
+            <b-form-input placeholder="bkayranci" v-model="username" v-on:keyup.enter="searchUser"></b-form-input>
+            <b-input-group-append>
+              <b-button variant="success" @click="searchUser">&#10170;</b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </div>
+      </div>
+      <div class="row" v-if="user">
+        <div class="col-12">
+          <b-row class="mb-3">
+            <b-col>
+              <b-card no-body class="overflow-hidden">
+                <b-row no-gutters>
+                  <b-col md="3">
+                    <b-card-img :src="user.avatar_url" class="rounded-0"></b-card-img>
+                  </b-col>
+                  <b-col md="9">
+                    <b-card-body :title="user.name">
+                      <b-card-text>
+                        {{ user.bio }}
+                      </b-card-text>
+                      <b-button :href="user.html_url" variant="success">
+                        Github
+                      </b-button>
+                    </b-card-body>
+                  </b-col>
+                </b-row>
+              </b-card>
+            </b-col>
+          </b-row>
+        </div>
+      </div>
+      <b-modal v-model="modalShow" title="Email List">
+        <p>Click to send email</p>
+        <b-list-group>
+          <b-list-group-item :href="`mailto:${email}`" v-for="(email, index) in uniqueEmails" :key="index">{{ email }}</b-list-group-item>
+        </b-list-group>
+      </b-modal>
+      <div class="row" id="repos" v-if="user">
+        <div class="col-3 mb-3" v-for="(repo, index) in repos" :key="index">
+          <b-card :title="repo.name" header-tag="header" footer-tag="footer" style="min-height: 450px">
+            <b-card-text>{{ repo.description }}</b-card-text>
+            <template v-slot:footer>
+              <b-button variant="primary" class="btn-block" @click="searchEmails(repo)">
+                Scan
+              </b-button>
+            </template>
+          </b-card>
+        </div>
+      </div>
     </div>
 </template>
 
 <script>
+import { BInputGroup, BInputGroupAppend, BButton } from 'bootstrap-vue'
+
 export default {
-    data() {
-        return {
-            app: document.getElementById("app"),
-            init: document.getElementById("init"),
-            layer: document.getElementById("layer"),
-            input: document.getElementById("inp-cover input"),
-            button: document.getElementsByTagName("button"),
-            user: {
-                username: '',
-                repository: ''
-            }
-        }
-    },
-    methods: {
-        emitOnChange: function (data) {
-            this.$emit('on-changed-search', data.target.value)
-        }
+  components: {
+    'b-input-group': BInputGroup,
+    'b-input-group-append': BInputGroupAppend,
+    'b-button': BButton
+  },
+  data() {
+    return {  
+      username: 'bkayranci',
+      repos: [],
+      user: null,
+      modalShow: false,
+      emails: [],
+      commits: []
     }
+  },
+  watch: {
+    'user.repos_url': function () {
+      this.searchRepos()
+    }
+  },
+  computed: {
+    uniqueEmails: function () {
+      return new Set(this.commits.map(c => c.commit.committer.email))
+    }
+  },
+  methods: {
+    searchUser: function () {
+      let self = this
+      fetch(`https://api.github.com/users/${self.username}`).then((response) => response.json()).then((user) => self.user = user
+      ).catch((error) => {
+        window.console.log(error)
+      })
+    },
+    searchRepos: function () {
+      let self = this
+      fetch(`${self.user.repos_url}`).then((response) => response.json()).then((repos) => self.repos = repos
+      ).catch((error) => {
+        window.console.log(error)
+      })
+    },
+    searchEmails: function (repo) {
+      let self = this
+      self.modalShow = true
+      fetch(`https://api.github.com/repos/${repo.full_name}/commits`).then((response) => response.json()).then((commits) => {
+        self.commits = commits
+      }
+      ).catch((error) => {
+        window.console.log(error)
+      })
+    },
+    emitOnChange: function (data) {
+      this.$emit('on-changed-search', data.target.value)
+    }
+  }
 }
 </script>
 
 <style>
-body {
-  padding: 1rem;
-}
-hr {
-  border: 1px dotted #bdc3c7;
-}
-.Search {
-  display: flex;
-}
-.Search label {
-  display: none;
-}
-.Search input {
-  background: #ededed url("https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png") no-repeat 7.22px center;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  outline: none;
-  padding: 0 6px;
-  font-size: 0px;
-  cursor: pointer;
-}
-.Search input:focus {
-  flex: 1;
-  border-radius: 6px;
-  padding: 0 6px 0 36px;
-  font-size: 14px;
-  cursor: text;
+.container {
+  padding: 10px;
 }
 
+ul li {
+  list-style: none;
+  
+}
 </style>
