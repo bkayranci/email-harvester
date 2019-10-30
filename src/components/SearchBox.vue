@@ -42,7 +42,7 @@
         </b-list-group>
       </b-modal>
       <div class="row" id="repos" v-if="user">
-        <div class="col-3 mb-3" v-for="(repo, index) in repos" :key="index">
+        <div class="col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3 mb-3" v-for="(repo, index) in repos" :key="index">
           <b-card :title="repo.name" header-tag="header" footer-tag="footer" style="min-height: 450px">
             <b-card-text>{{ repo.description }}</b-card-text>
             <template v-slot:footer>
