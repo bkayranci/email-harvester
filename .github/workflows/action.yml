@@ -1,21 +1,15 @@
-name: Node CI
-
+name: Build and Deploy
 on:
   push:
-    branches: 
+    branches:
       - master
-
 jobs:
-  build:
-    env:
-      ENVIRONMENT: CI 
+  build-and-deploy:
     runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
 
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x, 12.x]
-
-    steps:  
     - name: Build and Deploy
       uses: JamesIves/github-pages-deploy-action@master
       env:
