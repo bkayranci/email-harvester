@@ -2,12 +2,19 @@
     <div class="container">
       <div class="row">
         <div class="col-sm-12 mb-3">
-          <b-input-group class="mt-3">
-            <b-form-input v-model="username" v-on:keyup.enter="searchUser"></b-form-input>
-            <b-input-group-append>
-              <b-button variant="success" @click="searchUser">&#10170;</b-button>
-            </b-input-group-append>
-          </b-input-group>
+          <b-form-group
+            id="fieldset-github-username"
+            description="Let us know your github username."
+            label-for="github-username"
+          >
+            <b-input-group class="mt-3">
+              <b-form-input id="github-username" v-model="username" v-on:keyup.enter="searchUser" trim></b-form-input>
+
+              <b-input-group-append>
+                <b-button variant="success" @click="searchUser">&#10170;</b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
         </div>
       </div>
       <div class="row" v-if="user">
@@ -35,7 +42,7 @@
           </b-row>
         </div>
       </div>
-      <b-modal v-model="modalShow" title="Email List">
+      <b-modal @hidden="resetCommits()" v-model="modalShow" title="Email List">
         <p>Click to send email</p>
         <b-list-group>
           <b-list-group-item :href="`mailto:${email}`" v-for="(email, index) in uniqueEmails" :key="index">{{ email }}</b-list-group-item>
@@ -67,7 +74,7 @@ export default {
   },
   data() {
     return {  
-      username: 'bkayranci',
+      username: '',
       repos: [],
       user: null,
       modalShow: false,
@@ -104,7 +111,12 @@ export default {
       let self = this
       self.modalShow = true
       fetch(`https://api.github.com/repos/${repo.full_name}/commits`).then((response) => response.json()).then((commits) => {
-        self.commits = commits
+        if (commits.constructor === Array) {
+          self.commits = commits
+        } else if (commits.hasOwnProperty('message')) {
+          window.alert(commits.message)
+          self.modalShow = false
+        }
       }
       ).catch((error) => {
         window.console.log(error)
@@ -112,6 +124,9 @@ export default {
     },
     emitOnChange: function (data) {
       this.$emit('on-changed-search', data.target.value)
+    },
+    resetCommits: function () {
+      this.commits=[]
     }
   }
 }
