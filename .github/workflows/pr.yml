@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: MR Build
 on:
   pull_request
 jobs:
