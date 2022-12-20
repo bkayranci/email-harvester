@@ -15,6 +15,7 @@ jobs:
       - name: Install and Build 🔧
         run: |
           npm install
+          export BASE_URL=/email-harvester
           npm run build
 
       - name: Deploy 🚀
@@ -25,4 +26,3 @@ jobs:
           BRANCH: gh-pages
           FOLDER: dist
           CLEAN: true
-          BASE_URL: /email-harvester
